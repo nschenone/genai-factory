@@ -16,13 +16,13 @@ import os
 from typing import List, Union
 
 import mlrun.serving as mlrun_serving
-from mlrun.utils import get_caller_globals
-
 from genai_factory.config import WorkflowServerConfig
 from genai_factory.controller_client import ControllerClient
-from genai_factory.schemas import APIDictResponse, WorkflowType
+from genai_factory.schemas import APIDictResponse
 from genai_factory.schemas import Workflow as WorkflowSchema
+from genai_factory.schemas import WorkflowType
 from genai_factory.sessions import SessionStore
+from mlrun.utils import get_caller_globals
 
 
 class Workflow:
@@ -98,9 +98,10 @@ class Workflow:
                     last_step = last_step.to(**step)
                 else:
                     step_name = step.name
-                    if step_name in getattr(steps_config, "steps", {}):
-                        step.class_args = steps_config["steps"][step_name]
-                    last_step = last_step.to(step)
+                    full_class_name = f"{step.__module__}.{step.__class__.__name__}"
+                    last_step = last_step.to(
+                        full_class_name, **steps_config.get(step_name, {})
+                    )
             last_step.respond()
             return
 
