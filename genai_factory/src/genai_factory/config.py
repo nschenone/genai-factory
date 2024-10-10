@@ -162,7 +162,9 @@ def get_vector_db(
     return get_object_from_dict(vector_store_args, vector_db_shortcuts)
 
 
-def get_class_from_string(class_path, shortcuts: dict = {}) -> type:
+def get_class_from_string(class_path, shortcuts: dict = None) -> type:
+    if not shortcuts:
+        shortcuts = {}
     if class_path in shortcuts:
         class_path = shortcuts[class_path]
     module_name, class_name = class_path.rsplit(".", 1)
@@ -171,7 +173,9 @@ def get_class_from_string(class_path, shortcuts: dict = {}) -> type:
     return class_
 
 
-def get_object_from_dict(obj_dict: dict, shortcuts: dict = {}):
+def get_object_from_dict(obj_dict: dict, shortcuts: dict = None):
+    if not shortcuts:
+        shortcuts = {}
     if not isinstance(obj_dict, dict):
         return obj_dict
     obj_dict = obj_dict.copy()
