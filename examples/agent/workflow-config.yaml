@@ -1,0 +1,36 @@
+chunk_overlap: 20
+chunk_size: 1024
+controller_url: http://localhost:7001
+controller_username: guest
+default_llm:
+  class_name: langchain_openai.ChatOpenAI
+  model_name: gpt-3.5-turbo
+  temperature: 0
+default_vector_store:
+  class_name: chroma
+  collection_name: default
+  persist_directory: /tmp/chromadb/chroma
+deployment_url: http://localhost:7000
+embeddings:
+  class_name: huggingface
+  model_name: all-MiniLM-L6-v2
+log_level: DEBUG
+project_name: default
+verbose: true
+workflows_kwargs:
+  default:
+    steps:
+      Agent:
+        verbose: true
+        system_prompt: >
+            You are an expert chef that can help with recipes.
+            Always use your wikipedia tool rather than your own knowledge to answer questions about food, recipes, cooking equipment, and more.
+            Politely decline any other queries that are not food related.
+        tools:
+          wikipedia:
+            top_k_results: 5
+          rag:
+            collection: default
+            name: "beef-wellington-data-retriever"
+            description: "Query a retriever to get information about beef wellington recipe."
+        
